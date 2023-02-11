@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: black;
+            font-family: Verdana, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: white;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        a {
+            color: #808080;
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+
+        .nav {
+            height: 56px;
+        }
+
+        div {
+            text-align: center;
+        }
+
+        img {
+            max-width: 256px;
+        }
+
+        #title {
+            font-size: 22px;
+            margin-bottom: 7px;
+            margin-top: 14px;
+        }
+
+        #code {
+            font-size: 22px;
+            margin-top: 7px;
+        }
+
+        #redirect {
+            color: white;
+            font-size: 20px;
+            padding: 12px;
+            border: 2px solid #27272A;
+            background-color: transparent;
+            text-decoration: none;
+            border-radius: 0.5rem;
+        }
+
+        #redirect:hover {
+            background-color: #27272A;
+            color: white;
+        }
+
+        #footer {
+            align-items: center;
+            font-size: 20px;
+            margin-top: 28px;
+        }
+
+        #footer a {
+            text-decoration: none;
+        }
+
+        #footer a:hover {
+            color: #0EA5E9;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="./icon.png" draggable="false">
+    <div>
+        <h3 id="title">ERROR.LABEL</h3>
+        <p id="code">ERROR.STATUS</p>
+        <a id="redirect" draggable="false">ERROR.REDIRECT</a>
+        <p id="footer">FOOTER</p>
+    </div>
+</body>
+
+</html>

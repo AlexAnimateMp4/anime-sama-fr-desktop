@@ -1,0 +1,135 @@
+{
+    "LANGUAGE": "English",
+    "CHANGE_RESTART_DIALOG": {
+        "MESSAGE": "Application restart is required to make the change(s).",
+        "ALLOW": "Restart",
+        "DISALLOW": "Cancel"
+    },
+    "RESTART_DIALOG": {
+        "MESSAGE": "Do you want restart?",
+        "ALLOW": "Restart",
+        "DISALLOW": "Cancel"
+    },
+    "CONFIRM_ADBLOCK_DIALOG": {
+        "MESSAGE": "Are you sure you want to block ads?",
+        "ALLOW": "Yes",
+        "DISALLOW": "No"
+    },
+    "CONFIRM_LANGUAGE_DIALOG": {
+        "MESSAGE": "Restarting the app is required to change the app language.",
+        "ALLOW": "Accept",
+        "DISALLOW": "Cancel"
+    },
+    "TRAY": {
+        "PROFILE": "Profile",
+        "IMPORT": "Import",
+        "EXPORT": "Export",
+        "ACTIONS": {
+            "LABEL": "Actions",
+            "BACK": "Previous page",
+            "FORWARD": "Next page",
+            "RESTORE": "Restore",
+            "REDUCE": "Reduce",
+            "REFRESH": "Refresh",
+            "FORCE_REFRESH": "Force refresh",
+            "CENTER": "Center the application"
+        },
+        "SETTINGS": {
+            "LABEL": "Settings",
+            "LANGUAGES": "Languages",
+            "START_UP": "Run on startup",
+            "START_HIDDEN": "Start in background",
+            "START_FULL_SCREEN": "Start in fullscreen",
+            "MINIMIZE_TO_TRAY": "Minimize to taskbar",
+            "SAVE_WINDOW_SIZE": "Save app size",
+            "ALWAYS_ON_TOP": "Application always on top",
+            "ADBLOCK": "Block ads",
+            "DISCORD_RICH_PRESENCE": "Discord Rich Presence"
+        },
+        "ADVANCED": {
+            "LABEL": "Advanced",
+            "RELOAD": "Reload",
+            "RESTART": "Restart",
+            "RESET_DATA": "Reset Data",
+            "FORCE_CLOSE": "Force close"
+        },
+        "CLOSE": "Close"
+    },
+    "ACTIVITY": {
+        "HOME": {
+            "DETAILS": "In the home page",
+            "BUTTON": "Visit the site"
+        },
+        "CATALOG": {
+            "DETAILS": "Explore the catalog",
+            "BUTTON": "Explore the catalog"
+        },
+        "PLANNING": {
+            "DETAILS": "Look at the planning",
+            "BUTTON": "Look at the planning"
+        },
+        "HELP": {
+            "DETAILS": "In the help page",
+            "BUTTON": "Visit the help page"
+        },
+        "PROFILE": {
+            "DETAILS": "Look at his profile",
+            "BUTTON": "Look at your profile"
+        },
+        "CONTACT": {
+            "DETAILS": "In the contact page",
+            "BUTTON": "Contact us"
+        },
+        "INFO": {
+            "DETAILS": "Look at the info",
+            "BUTTON": "See info"
+        },
+        "WATCH": {
+            "PAUSED": "Paused",
+            "PLAYING": "Now playing",
+            "SERIE": {
+                "DETAILS": "Watch an episode | #STATUS#",
+                "STATE": {
+                    "SEASON": "Season #SEASON# | Episode #EPISODE#",
+                    "OTHER": "#SEASON# | Episode #EPISODE#"
+                },
+                "BUTTON": "Watch the episode"
+            },
+            "MOVIE": {
+                "DETAILS": "Watch a movie",
+                "BUTTON": "Watch the movie"
+            },
+            "SCAN": {
+                "DETAILS": "Look at a scan",
+                "STATE": "Chapter #CHAPTER#",
+                "BUTTON": "Look at the scan"
+            }
+        },
+        "VF": "French version",
+        "VO": "Original Subtitled Version"
+    },
+    "TITLE": {
+        "HOME": "Home",
+        "CATALOG": "Catalog",
+        "PLANNING": "Planning",
+        "HELP": "Help",
+        "PROFILE": "Profile",
+        "CONTACT": "Contact",
+        "INFO": "Info | #NAME#",
+        "WATCH": {
+            "SERIE": {
+                "SEASON": "Season #SEASON# - Episode #EPISODE# | #NAME#",
+                "OTHER": "#SEASON# - Episode #EPISODE# | #NAME#"
+            },
+            "MOVIE": "The movie | #NAME#",
+            "SCAN": "Chapter #CHAPTER# | #NAME#"
+        },
+        "ERROR": "Error #CODE#"
+    },
+    "FOOTER": "#COPYLEFT# #TIME# #NAME##NEW_LINE##CODED# with #HEART# by #AUTHOR# and #CONTRIBUTORS_START#contributors#CONTRIBUTORS_END#.",
+    "ERROR": {
+        "LABEL": "An error has occurred",
+        "STATUS": "Status #CODE#",
+        "REDIRECT": "Go to the home page"
+    }
+}

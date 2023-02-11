@@ -1,0 +1,135 @@
+{
+    "LANGUAGE": "Français",
+    "CHANGE_RESTART_DIALOG": {
+        "MESSAGE": "Le redémarrage de l'application est requis pour effectuer le(s) changement(s).",
+        "ALLOW": "Redémarrer",
+        "DISALLOW": "Annuler"
+    },
+    "RESTART_DIALOG": {
+        "MESSAGE": "Voulez-vous redémarrer ?",
+        "ALLOW": "Redémarrer",
+        "DISALLOW": "Annuler"
+    },
+    "CONFIRM_ADBLOCK_DIALOG": {
+        "MESSAGE": "Êtes-vous sûr de vouloir bloquer les pubs ?",
+        "ALLOW": "Oui",
+        "DISALLOW": "Non"
+    },
+    "CONFIRM_LANGUAGE_DIALOG": {
+        "MESSAGE": "Le redémarrage de l'application est nécessaire pour changer la langue de l'application.",
+        "ALLOW": "Accepter",
+        "DISALLOW": "Annuler"
+    },
+    "TRAY": {
+        "PROFILE": "Profil",
+        "IMPORT": "Importer",
+        "EXPORT": "Exporter",
+        "ACTIONS": {
+            "LABEL": "Actions",
+            "BACK": "Page précédente",
+            "FORWARD": "Page suivante",
+            "RESTORE": "Restaurer",
+            "REDUCE": "Réduire",
+            "REFRESH": "Actualiser",
+            "FORCE_REFRESH": "Forcer l'actualisation",
+            "CENTER": "Centrer l'application"
+        },
+        "SETTINGS": {
+            "LABEL": "Paramètres",
+            "LANGUAGES": "Langages",
+            "START_UP": "Lancer au démarrage",
+            "START_HIDDEN": "Démarrer en arrière-plan",
+            "START_FULL_SCREEN": "Démarrer en plein écran",
+            "MINIMIZE_TO_TRAY": "Réduire dans la barre des tâches",
+            "SAVE_WINDOW_SIZE": "Enregistrer la taille de l'application",
+            "ALWAYS_ON_TOP": "Application toujours au dessus",
+            "ADBLOCK": "Bloquer les pubs",
+            "DISCORD_RICH_PRESENCE": "Discord Rich Presence"
+        },
+        "ADVANCED": {
+            "LABEL": "Avancer",
+            "RELOAD": "Recharger",
+            "RESTART": "Redémarrer",
+            "RESET_DATA": "Réinitialiser les données",
+            "FORCE_CLOSE": "Forcer la femerture"
+        },
+        "CLOSE": "Fermer"
+    },
+    "ACTIVITY": {
+        "HOME": {
+            "DETAILS": "Dans la page d'accueil",
+            "BUTTON": "Visitez le site"
+        },
+        "CATALOG": {
+            "DETAILS": "Explore le catalogue",
+            "BUTTON": "Explorez le catalogue"
+        },
+        "PLANNING": {
+            "DETAILS": "Regarde le planning",
+            "BUTTON": "Regardez le planning"
+        },
+        "HELP": {
+            "DETAILS": "Dans la page d'aide",
+            "BUTTON": "Visitez la page d'aide"
+        },
+        "PROFILE": {
+            "DETAILS": "Regarde son profil",
+            "BUTTON": "Regardez votre profil"
+        },
+        "CONTACT": {
+            "DETAILS": "Dans la page de contact",
+            "BUTTON": "Contactez nous"
+        },
+        "INFO": {
+            "DETAILS": "Regarde les infos",
+            "BUTTON": "Voir les infos"
+        },
+        "WATCH": {
+            "PAUSED": "En pause",
+            "PLAYING": "Lecture en cours",
+            "SERIE": {
+                "DETAILS": "Regarde un épisode | #STATUS#",
+                "STATE": {
+                    "SEASON": "Saison #SEASON# | Épisode #EPISODE#",
+                    "OTHER": "#SEASON# | Épisode #EPISODE#"
+                },
+                "BUTTON": "Regardez l'épisode"
+            },
+            "MOVIE": {
+                "DETAILS": "Regarde un film",
+                "BUTTON": "Regardez le film"
+            },
+            "SCAN": {
+                "DETAILS": "Regarde un scan",
+                "STATE": "Chapitre #CHAPTER#",
+                "BUTTON": "Regardez le scan"
+            }
+        },
+        "VF": "Version Française",
+        "VO": "Version Originale Sous-Titrée"
+    },
+    "TITLE": {
+        "HOME": "Accueil",
+        "CATALOG": "Catalogue",
+        "PLANNING": "Planning",
+        "HELP": "Aide",
+        "PROFILE": "Profil",
+        "CONTACT": "Contact",
+        "INFO": "Info | #NAME#",
+        "WATCH": {
+            "SERIE": {
+                "SEASON": "Saison #SEASON# - Épisode #EPISODE# | #NAME#",
+                "OTHER": "#SEASON# - Épisode #EPISODE# | #NAME#"
+            },
+            "MOVIE": "Le film | #NAME#",
+            "SCAN": "Chapitre #CHAPTER# | #NAME#"
+        },
+        "ERROR": "Erreur #CODE#"
+    },
+    "FOOTER": "#COPYLEFT# #TIME# #NAME##NEW_LINE##CODED# avec #HEART# par #AUTHOR# et les #CONTRIBUTORS_START#contributeurs#CONTRIBUTORS_END#.",
+    "ERROR": {
+        "LABEL": "Une erreur s'est produite",
+        "STATUS": "Statut #CODE#",
+        "REDIRECT": "Aller à la page d'accueil"
+    }
+}

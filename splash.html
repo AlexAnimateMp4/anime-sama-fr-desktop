@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            html, body {
+                background-color: black;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                width: fit-content;
+                height: fit-content;
+                -webkit-app-region: drag;
+                user-select: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                -webkit-touch-callout: none;
+            }
+
+            .container {
+                padding: 15px;
+                text-align: center;
+            }
+
+            img {
+                animation: zoom-in-zoom-out 3.5s ease infinite;
+            }
+
+            @keyframes zoom-in-zoom-out {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(0.75);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+        </style>
+    </head>
+    <body oncontextmenu="return false;">
+        <div class="container">
+            <img src="./splash.png" style="width: 512px;" draggable="false">
+        </div>
+    </body>
+</html>
