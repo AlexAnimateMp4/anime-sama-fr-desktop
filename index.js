@@ -98,47 +98,25 @@ if (electron.app.requestSingleInstanceLock()) {
                 return defaultUrl.base;
             };
         };
+        let settingsSchema = {};
+        settingsSchema[packagejson.exeName] = {
+            type: "object",
+            default: {
+                LANGUAGE: undefined,
+                START_UP: false,
+                START_HIDDEN: false,
+                START_FULL_SCREEN: false,
+                MINIMIZE_TO_TRAY: false,
+                SAVE_WINDOW_SIZE: false,
+                ALWAYS_ON_TOP: false,
+                ADBLOCK: false,
+                DISCORD_RICH_PRESENCE: false
+            }
+        };
         const settings = new electronStore({
             name: "settings",
             watch: true,
-            schema: {
-                LANGUAGE: {
-                    type: "string",
-                    default: undefined
-                },
-                START_UP: {
-                    type: "boolean",
-                    default: false
-                },
-                START_HIDDEN: {
-                    type: "boolean",
-                    default: false
-                },
-                START_FULL_SCREEN: {
-                    type: "boolean",
-                    default: false
-                },
-                MINIMIZE_TO_TRAY: {
-                    type: "boolean",
-                    default: false
-                },
-                SAVE_WINDOW_SIZE: {
-                    type: "boolean",
-                    default: false
-                },
-                ALWAYS_ON_TOP: {
-                    type: "boolean",
-                    default: false
-                },
-                ADBLOCK: {
-                    type: "boolean",
-                    default: false
-                },
-                DISCORD_RICH_PRESENCE: {
-                    type: "boolean",
-                    default: false
-                }
-            }
+            schema: settingsSchema
         });
         let profileSchema = {};
         profileSchema[packagejson.exeName] = {
@@ -202,18 +180,18 @@ if (electron.app.requestSingleInstanceLock()) {
         splashWindow.on("closed", () => electron.app.exit());
         return splashWindow.loadFile(resolve(join(__dirname, "splash.html"))).then(() => {
             defaultUrl.full = deepLinkToUrl(process.argv.find(arg => is.deepUrl(arg) == true));
-            let isHidden = settings.get("START_HIDDEN");
+            let isHidden = settings.get(`${packagejson.exeName}.START_HIDDEN`);
             if (!isHidden) splashWindow.show();
             const createWindow = () => {
-                if (!settings.has("WIDTH") || settings.get("WIDTH") > size.width) settings.set("WIDTH", Math.round((size.width - (Math.abs((size.width * 0.6) / 2 - size.width / 2)))));
-                if (!settings.has("HEIGHT") || settings.get("HEIGHT") > size.height) settings.set("HEIGHT", Math.round((size.height - (Math.abs((size.height * 0.6) / 2 - size.height / 2)))));
+                if (!settings.has(`${packagejson.exeName}.WIDTH`) || settings.get(`${packagejson.exeName}.WIDTH`) > size.width) settings.set(`${packagejson.exeName}.WIDTH`, Math.round((size.width - (Math.abs((size.width * 0.6) / 2 - size.width / 2)))));
+                if (!settings.has(`${packagejson.exeName}.HEIGHT`) || settings.get(`${packagejson.exeName}.HEIGHT`) > size.height) settings.set(`${packagejson.exeName}.HEIGHT`, Math.round((size.height - (Math.abs((size.height * 0.6) / 2 - size.height / 2)))));
                 const mainWindow = new electron.BrowserWindow({
-                    width: settings.get("WIDTH"),
-                    height: settings.get("HEIGHT"),
+                    width: settings.get(`${packagejson.exeName}.WIDTH`),
+                    height: settings.get(`${packagejson.exeName}.HEIGHT`),
                     title: displayName,
                     center: true,
                     show: false,
-                    fullscreen: settings.get("START_FULL_SCREEN"),
+                    fullscreen: settings.get(`${packagejson.exeName}.START_FULL_SCREEN`),
                     icon: icon,
                     webPreferences: {
                         devTools: isDev == true,
@@ -228,7 +206,7 @@ if (electron.app.requestSingleInstanceLock()) {
                     #interval = undefined;
 
                     has() {
-                        return settings.get("DISCORD_RICH_PRESENCE") ? typeof this.#socket != "undefined" ? (this.#socket.closed == false || this.#socket.destroyed == false) : this.#status == "CONNECTED" : false;
+                        return settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`) ? typeof this.#socket != "undefined" ? (this.#socket.closed == false || this.#socket.destroyed == false) : this.#status == "CONNECTED" : false;
                     };
 
                     set() {
@@ -276,7 +254,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                     this.interval = undefined;
                                 };
                             };
-                        } else if (settings.get("DISCORD_RICH_PRESENCE")) {
+                        } else if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) {
                             this.#socket = new Socket();
                             this.#socket.setEncoding("utf8");
                             this.#socket.setKeepAlive(true);
@@ -304,7 +282,7 @@ if (electron.app.requestSingleInstanceLock()) {
                             });
                             this.#socket.on("close", error => {
                                 if (!error) {
-                                    if (settings.get("DISCORD_RICH_PRESENCE")) {
+                                    if (!settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) {
                                         this.emit("disabled");
                                         if (this.#status != "DISABLED") this.#status = "DISABLED";
                                     } else {
@@ -374,21 +352,21 @@ if (electron.app.requestSingleInstanceLock()) {
                 for (const lang of readdirSync(resolve(join(__dirname, "translations"))).filter(file => file.endsWith(".json"))) {
                     languages.push(lang.split(extname(lang))[0].toLowerCase());
                 };
-                if (!settings.has("LANGUAGE") || !languages.includes(String(settings.get("LANGUAGE")).toLowerCase())) {
+                if (!settings.has(`${packagejson.exeName}.LANGUAGE`) || !languages.includes(String(settings.get(`${packagejson.exeName}.LANGUAGE`)).toLowerCase())) {
                     const locale = electron.app.getLocale().toLowerCase();
                     const systemLocale = electron.app.getSystemLocale().toLowerCase();
-                    if (languages.includes(locale)) settings.set("LANGUAGE", locale);
-                    else if (languages.includes(systemLocale)) settings.set("LANGUAGE", systemLocale);
+                    if (languages.includes(locale)) settings.set(`${packagejson.exeName}.LANGUAGE`, locale);
+                    else if (languages.includes(systemLocale)) settings.set(`${packagejson.exeName}.LANGUAGE`, systemLocale);
                     else {
                         const findPreferred = electron.app.getPreferredSystemLanguages().find(lang => languages.includes(lang));
-                        if (is.string(findPreferred)) settings.set("LANGUAGE", findPreferred.toLowerCase());
-                        else if (languages.length > 0 && is.string(languages[0])) settings.set("LANGUAGE", languages[0]);
+                        if (is.string(findPreferred)) settings.set(`${packagejson.exeName}.LANGUAGE`, findPreferred.toLowerCase());
+                        else if (languages.length > 0 && is.string(languages[0])) settings.set(`${packagejson.exeName}.LANGUAGE`, languages[0]);
                     };
                 };
                 const translation = (() => {
                     try {
-                        if (settings.has("LANGUAGE") && is.string(settings.get("LANGUAGE"))) {
-                            const value = require(resolve(join(__dirname, "translations", `${settings.get("LANGUAGE")}.json`)));
+                        if (settings.has(`${packagejson.exeName}.LANGUAGE`) && is.string(settings.get(`${packagejson.exeName}.LANGUAGE`))) {
+                            const value = require(resolve(join(__dirname, "translations", `${settings.get(`${packagejson.exeName}.LANGUAGE`)}.json`)));
                             return is.json(value) == true ? value : {};
                         } else return {};
                     } catch (error) {
@@ -411,21 +389,27 @@ if (electron.app.requestSingleInstanceLock()) {
                     noLink: true,
                     type: "warning"
                 }).then(result => {
-                    if (result.response == 0) settings.set("ADBLOCK", true);
-                    else settings.set("ADBLOCK", false);
+                    if (result.response == 0) settings.set(`${packagejson.exeName}.ADBLOCK`, true);
+                    else settings.set(`${packagejson.exeName}.ADBLOCK`, false);
                 });
-                mainWindow.webContents.on("did-fail-load", (event, errorCode) => {
-                    event.preventDefault();
-                    return mainWindow.loadFile(resolve(join(__dirname, "error.html"))).then(() => {
-                        mainWindow.webContents.executeJavaScript(`const title = document.getElementById("title");const code = document.getElementById("code");const redirect = document.getElementById("redirect");const footer = document.getElementById("footer");if (title) title.innerText = "${getTranslation("ERROR.LABEL")}";if (code) code.innerText = "${String(getTranslation("ERROR.STATUS")).replace("#CODE#", errorCode)}";if (redirect) {redirect.href = "${defaultUrl.base}";redirect.innerText = "${getTranslation("ERROR.REDIRECT")}";}if (footer) footer.innerHTML = "${String(getTranslation("FOOTER")).replace("#COPYLEFT#", "<span style='display:inline-block;transform: rotate(180deg);vertical-align: middle;'>©</span>").replace("#TIME#", new Date().getFullYear().toString() == packagejson.releaseYear ? packagejson.releaseYear : `${packagejson.releaseYear} - ${new Date().getFullYear()}`).replace("#NEW_LINE#", "<br>").replace("#NAME#", `<a id='credits_name' href='${String(linkProject)}' draggable='false'>${String(displayName)} Desktop</a>`).replace("#CODED#", "&lt;/&gt;").replace("#HEART#", "❤").replace("#AUTHOR#", `<a id='credits_author' href='${String(author.url)}' draggable='false'>${String(author.name)}</a>`).replace("#CONTRIBUTORS_START#", `<a id='credits_contributors' href='${String(linkProject)}/graphs/contributors' draggable='false'>`).replace("#CONTRIBUTORS_END#", "</a>")}";`);
-                        mainWindow.setTitle(String(getTranslation("TITLE.ERROR")).replace("#CODE#", errorCode));
-                        discordRichPresence.clr();
-                        discordRichPresence.details = getTranslation("ERROR.LABEL");
-                        discordRichPresence.largeImage = "error";
-                        discordRichPresence.largeImageTooltip = String(getTranslation("ERROR.STATUS")).replace("#CODE#", errorCode);
-                        if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                let errorCode = 500;
+                const updateError = () => {
+                    mainWindow.webContents.once("did-fail-load", (event, code) => sendError());
+                    mainWindow.webContents.executeJavaScript(`(() => {const title = document.getElementById("title");const code = document.getElementById("code");const redirect = document.getElementById("redirect");const footer = document.getElementById("footer");if (title) title.innerText = "${getTranslation("ERROR.LABEL")}";if (code) code.innerText = "${String(getTranslation("ERROR.STATUS")).replace("#CODE#", errorCode)}";if (redirect) {redirect.href = "${defaultUrl.base}";redirect.innerText = "${getTranslation("ERROR.REDIRECT")}";}if (footer) footer.innerHTML = "${String(getTranslation("FOOTER")).replace("#COPYLEFT#", "<span style='display:inline-block;transform: rotate(180deg);vertical-align: middle;'>©</span>").replace("#TIME#", new Date().getFullYear().toString() == packagejson.releaseYear ? packagejson.releaseYear : `${packagejson.releaseYear} - ${new Date().getFullYear()}`).replace("#NEW_LINE#", "<br>").replace("#NAME#", `<a id='credits_name' href='${String(linkProject)}' draggable='false'>${String(displayName)} Desktop</a>`).replace("#CODED#", "&lt;/&gt;").replace("#HEART#", "❤").replace("#AUTHOR#", `<a id='credits_author' href='${String(author.url)}' draggable='false'>${String(author.name)}</a>`).replace("#CONTRIBUTORS_START#", `<a id='credits_contributors' href='${String(linkProject)}/graphs/contributors' draggable='false'>`).replace("#CONTRIBUTORS_END#", "</a>")}";})();`);
+                    mainWindow.setTitle(String(getTranslation("TITLE.ERROR")).replace("#CODE#", errorCode));
+                    discordRichPresence.clr();
+                    discordRichPresence.details = getTranslation("ERROR.LABEL");
+                    discordRichPresence.largeImage = "error";
+                    discordRichPresence.largeImageTooltip = String(getTranslation("ERROR.STATUS")).replace("#CODE#", errorCode);
+                    if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
+                };
+
+                function sendError() {
+                    mainWindow.loadFile(resolve(join(__dirname, "error.html"))).then(() => {
+                        if (!is.number(errorCode)) errorCode = 500;
+                        updateError();
                     });
-                });
+                };
                 electron.app.on("second-instance", (event, argv) => {
                     event.preventDefault();
                     const deepLink = deepLinkToUrl(argv.find(arg => is.deepUrl(arg) == true));
@@ -469,8 +453,8 @@ if (electron.app.requestSingleInstanceLock()) {
                 settings.onDidChange("SAVE_WINDOW_SIZE", newValue => {
                     if (newValue) {
                         const size = mainWindow.getBounds();
-                        settings.set("WIDTH", size.width);
-                        settings.set("HEIGHT", size.height);
+                        settings.set(`${packagejson.exeName}.WIDTH`, size.width);
+                        settings.set(`${packagejson.exeName}.HEIGHT`, size.height);
                     } else {
                         settings.delete("WIDTH");
                         settings.delete("HEIGHT");
@@ -480,7 +464,7 @@ if (electron.app.requestSingleInstanceLock()) {
                 settings.onDidChange("ALWAYS_ON_TOP", newValue => mainWindow.setAlwaysOnTop(newValue));
                 settings.onDidChange("ADBLOCK", () => mainWindow.reload());
                 electron.session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
-                    if (settings.get("ADBLOCK")) {
+                    if (settings.get(`${packagejson.exeName}.ADBLOCK`)) {
                         if (new URL(details.url).host.startsWith("pagead")) callback({
                             cancel: true
                         });
@@ -488,10 +472,10 @@ if (electron.app.requestSingleInstanceLock()) {
                     } else callback({});
                 });
                 mainWindow.on("resized", () => {
-                    if (settings.get("SAVE_WINDOW_SIZE")) {
+                    if (settings.get(`${packagejson.exeName}.SAVE_WINDOW_SIZE`)) {
                         const size = mainWindow.getBounds();
-                        settings.set("WIDTH", size.width);
-                        settings.set("HEIGHT", size.height);
+                        settings.set(`${packagejson.exeName}.WIDTH`, size.width);
+                        settings.set(`${packagejson.exeName}.HEIGHT`, size.height);
                     };
                 });
                 mainWindow.on("page-title-updated", event => event.preventDefault());
@@ -542,14 +526,14 @@ if (electron.app.requestSingleInstanceLock()) {
                             if (!notWatchEpisode) {
                                 if (data.type == "MOVIE") discordRichPresence.state = getTranslation(`ACTIVITY.WATCH.PLAYING`);
                                 else discordRichPresence.details = String(getTranslation(`ACTIVITY.WATCH.SERIE.DETAILS`)).replace("#STATUS#", getTranslation(`ACTIVITY.WATCH.PLAYING`));
-                                if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                                if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                             };
                         });
                         mainWindow.webContents.on("media-paused", () => {
                             if (!notWatchEpisode) {
                                 if (data.type == "MOVIE") discordRichPresence.state = getTranslation(`ACTIVITY.WATCH.PAUSED`);
                                 else discordRichPresence.details = String(getTranslation(`ACTIVITY.WATCH.SERIE.DETAILS`)).replace("#STATUS#", getTranslation(`ACTIVITY.WATCH.PAUSED`));
-                                if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                                if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                             };
                         });
                     };
@@ -590,7 +574,7 @@ if (electron.app.requestSingleInstanceLock()) {
                         label: getTranslation("ACTIVITY.INFO.BUTTON"),
                         url: `${defaultUrl.base}${data.urlInfo}`
                     });
-                    if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                    if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                 });
                 electron.ipcMain.on("scanChange", (event, data) => {
                     let profileData = {};
@@ -635,7 +619,7 @@ if (electron.app.requestSingleInstanceLock()) {
                         discordRichPresence.smallImage = String(data.language).toLowerCase();
                         discordRichPresence.smallImageTooltip = getTranslation(`ACTIVITY.${String(data.language).toUpperCase()}`);
                     };
-                    if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                    if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                 });
                 electron.ipcMain.on("watchlistChange", (event, data) => {
                     let profileData = {};
@@ -686,7 +670,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                     label: getTranslation(`ACTIVITY.INFO.BUTTON`),
                                     url: url
                                 });
-                                if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                                if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                             });
                         };
                         if (pathName.length <= 0) {
@@ -697,7 +681,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 label: getTranslation("ACTIVITY.HOME.BUTTON"),
                                 url: url
                             });
-                            if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                            if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                         } else if (pathName == "/catalogue") {
                             mainWindow.setTitle(getTranslation("TITLE.CATALOG"));
                             discordRichPresence.details = getTranslation("ACTIVITY.CATALOG.DETAILS");
@@ -706,7 +690,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 label: getTranslation("ACTIVITY.CATALOG.BUTTON"),
                                 url: url
                             });
-                            if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                            if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                         } else if (pathName == "/planning") {
                             mainWindow.setTitle(getTranslation("TITLE.PLANNING"));
                             discordRichPresence.details = getTranslation("ACTIVITY.PLANNING.DETAILS");
@@ -715,7 +699,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 label: getTranslation("ACTIVITY.PLANNING.BUTTON"),
                                 url: url
                             });
-                            if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                            if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                         } else if (pathName == "/aide") {
                             mainWindow.setTitle(getTranslation("TITLE.HELP"));
                             discordRichPresence.details = getTranslation("ACTIVITY.HELP.DETAILS");
@@ -724,7 +708,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 label: getTranslation("ACTIVITY.HELP.BUTTON"),
                                 url: url
                             });
-                            if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                            if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                         } else if (pathName == "/profil") {
                             mainWindow.setTitle(getTranslation("TITLE.PROFILE"));
                             discordRichPresence.details = getTranslation("ACTIVITY.PROFILE.DETAILS");
@@ -733,7 +717,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 label: getTranslation("ACTIVITY.PROFILE.BUTTON"),
                                 url: url
                             });
-                            if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                            if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                         } else if (pathName == "/contact") {
                             mainWindow.setTitle(getTranslation("TITLE.CONTACT"));
                             discordRichPresence.details = getTranslation("ACTIVITY.CONTACT.DETAILS");
@@ -742,7 +726,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 label: getTranslation("ACTIVITY.CONTACT.BUTTON"),
                                 url: url
                             });
-                            if (settings.get("DISCORD_RICH_PRESENCE")) discordRichPresence.set();
+                            if (settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`)) discordRichPresence.set();
                         };
                     } else if (validateUrl.protocol != "file:" || !url.endsWith("error.html")) {
                         event.preventDefault();
@@ -757,11 +741,11 @@ if (electron.app.requestSingleInstanceLock()) {
                         return splashWindow.close();
                     } else {
                         const isUrl = is.url(url);
-                        if (settings.get("ALWAYS_ON_TOP")) mainWindow.setAlwaysOnTop(true);
+                        if (settings.get(`${packagejson.exeName}.ALWAYS_ON_TOP`)) mainWindow.setAlwaysOnTop(true);
                         if (isUrl) mainWindow.webContents.emit("will-navigate", undefined, url);
                         const tray = new electron.Tray(icon);
                         mainWindow.on("close", event => {
-                            if (settings.get("MINIMIZE_TO_TRAY")) {
+                            if (settings.get(`${packagejson.exeName}.MINIMIZE_TO_TRAY`)) {
                                 event.preventDefault();
                                 if (!isHidden) mainWindow.hide();
                                 return false;
@@ -830,7 +814,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 id: "settingsImport",
                                 label: getTranslation("TRAY.SETTINGS.LABEL"),
                                 click: async () => await electron.dialog.showOpenDialog(mainWindow, {
-                                    defaultPath: profile.path,
+                                    defaultPath: settings.path,
                                     filters: [{
                                         name: "JSON",
                                         extensions: ["json"]
@@ -840,40 +824,42 @@ if (electron.app.requestSingleInstanceLock()) {
                                     if (!result.canceled && is.string(result.filePaths[0])) {
                                         const importedSettings = require(result.filePaths[0]);
                                         if (is.json(importedSettings)) {
-                                            let restartLanguage = [false];
-                                            for (let [name, value] of Object.entries(importedSettings)) {
-                                                name = name.toUpperCase();
-                                                if (name == "LANGUAGE" && is.string(value) && settings.get(name) != value) restartLanguage = [true, value];
-                                                else if (name == "WIDTH" && is.number(value) && value <= size.width && settings.get("WIDTH") != value) {
-                                                    settings.set("WIDTH", value);
-                                                    mainWindow.setSize(value, settings.get("HEIGHT"));
-                                                    mainWindow.center();
-                                                } else if (name == "HEIGHT" && is.number(value) && value <= size.height && settings.get("HEIGHT") != value) {
-                                                    settings.set("HEIGHT", value);
-                                                    mainWindow.setSize(settings.get("WIDTH"), value);
-                                                    mainWindow.center();
-                                                } else if (typeof value == "boolean" && settings.get(name) != value) {
-                                                    if (name == "ADBLOCK") await setAdBlock();
-                                                    else settings.set(name, value);
+                                            if (is.json(importedSettings[packagejson.exeName])) {
+                                                let restartLanguage = [false];
+                                                for (let [name, value] of Object.entries(importedSettings[packagejson.exeName])) {
+                                                    name = name.toUpperCase();
+                                                    if (name == "LANGUAGE" && is.string(value) && settings.get(`${packagejson.exeName}.${name}`) != value) restartLanguage = [true, value];
+                                                    else if (name == "WIDTH" && is.number(value) && value <= size.width && settings.get(`${packagejson.exeName}.WIDTH`) != value) {
+                                                        settings.set(`${packagejson.exeName}.WIDTH`, value);
+                                                        mainWindow.setSize(value, settings.get(`${packagejson.exeName}.HEIGHT`));
+                                                        mainWindow.center();
+                                                    } else if (name == "HEIGHT" && is.number(value) && value <= size.height && settings.get(`${packagejson.exeName}.HEIGHT`) != value) {
+                                                        settings.set(`${packagejson.exeName}.HEIGHT`, value);
+                                                        mainWindow.setSize(settings.get(`${packagejson.exeName}.WIDTH`), value);
+                                                        mainWindow.center();
+                                                    } else if (typeof value == "boolean" && settings.get(`${packagejson.exeName}.${name}`) != value) {
+                                                        if (name == "ADBLOCK") await setAdBlock();
+                                                        else settings.set(`${packagejson.exeName}.${name}`, value);
+                                                    };
                                                 };
+                                                if (restartLanguage[0]) return await electron.dialog.showMessageBox(mainWindow, {
+                                                    title: displayName,
+                                                    message: getTranslation("CONFIRM_LANGUAGE_DIALOG.MESSAGE"),
+                                                    buttons: [getTranslation("CONFIRM_LANGUAGE_DIALOG.ALLOW"), getTranslation("CONFIRM_LANGUAGE_DIALOG.DISALLOW")],
+                                                    defaultId: 1,
+                                                    cancelId: 1,
+                                                    noLink: true,
+                                                    type: "warning"
+                                                }).then(result => {
+                                                    if (result.response == 0) {
+                                                        settings.set(`${packagejson.exeName}.LANGUAGE`, restartLanguage[1]);
+                                                        electron.app.relaunch();
+                                                        mainWindow.removeAllListeners("close");
+                                                        if (!tray.isDestroyed()) tray.destroy();
+                                                        return electron.app.quit();
+                                                    };
+                                                });
                                             };
-                                            if (restartLanguage[0]) return await electron.dialog.showMessageBox(mainWindow, {
-                                                title: displayName,
-                                                message: getTranslation("CONFIRM_LANGUAGE_DIALOG.MESSAGE"),
-                                                buttons: [getTranslation("CONFIRM_LANGUAGE_DIALOG.ALLOW"), getTranslation("CONFIRM_LANGUAGE_DIALOG.DISALLOW")],
-                                                defaultId: 1,
-                                                cancelId: 1,
-                                                noLink: true,
-                                                type: "warning"
-                                            }).then(result => {
-                                                if (result.response == 0) {
-                                                    settings.set("LANGUAGE", restartLanguage[1]);
-                                                    electron.app.relaunch();
-                                                    mainWindow.removeAllListeners("close");
-                                                    if (!tray.isDestroyed()) tray.destroy();
-                                                    return electron.app.quit();
-                                                };
-                                            });
                                         };
                                     };
                                 })
@@ -951,51 +937,51 @@ if (electron.app.requestSingleInstanceLock()) {
                                 id: "start_up",
                                 label: getTranslation("TRAY.SETTINGS.START_UP"),
                                 type: "checkbox",
-                                checked: settings.get("START_UP") == true,
-                                click: () => settings.set("START_UP", !settings.get("START_UP"))
+                                checked: settings.get(`${packagejson.exeName}.START_UP`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.START_UP`, !settings.get(`${packagejson.exeName}.START_UP`))
                             }, {
                                 id: "start_hidden",
                                 label: getTranslation("TRAY.SETTINGS.START_HIDDEN"),
                                 type: "checkbox",
-                                checked: settings.get("START_FULL_SCREEN") == true ? false : settings.get("START_HIDDEN") == true,
-                                click: () => settings.set("START_HIDDEN", !settings.get("START_HIDDEN"))
+                                checked: settings.get(`${packagejson.exeName}.START_FULL_SCREEN`) == true ? false : settings.get(`${packagejson.exeName}.START_HIDDEN`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.START_HIDDEN`, !settings.get(`${packagejson.exeName}.START_HIDDEN`))
                             }, {
                                 id: "start_full_screen",
                                 label: getTranslation("TRAY.SETTINGS.START_FULL_SCREEN"),
                                 type: "checkbox",
-                                checked: settings.get("START_HIDDEN") == true ? false : settings.get("START_FULL_SCREEN") == true,
-                                click: () => settings.set("START_FULL_SCREEN", !settings.get("START_FULL_SCREEN"))
+                                checked: settings.get(`${packagejson.exeName}.START_HIDDEN`) == true ? false : settings.get(`${packagejson.exeName}.START_FULL_SCREEN`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.START_FULL_SCREEN`, !settings.get(`${packagejson.exeName}.START_FULL_SCREEN`))
                             }, {
                                 id: "minimize_to_tray",
                                 label: getTranslation("TRAY.SETTINGS.MINIMIZE_TO_TRAY"),
                                 type: "checkbox",
-                                checked: settings.get("MINIMIZE_TO_TRAY") == true,
-                                click: () => settings.set("MINIMIZE_TO_TRAY", !settings.get("MINIMIZE_TO_TRAY"))
+                                checked: settings.get(`${packagejson.exeName}.MINIMIZE_TO_TRAY`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.MINIMIZE_TO_TRAY`, !settings.get(`${packagejson.exeName}.MINIMIZE_TO_TRAY`))
                             }, {
                                 id: "save_window_size",
                                 label: getTranslation("TRAY.SETTINGS.SAVE_WINDOW_SIZE"),
                                 type: "checkbox",
                                 enabled: process.platform != "linux",
-                                checked: settings.get("SAVE_WINDOW_SIZE") == true,
-                                click: () => settings.set("SAVE_WINDOW_SIZE", !settings.get("SAVE_WINDOW_SIZE"))
+                                checked: settings.get(`${packagejson.exeName}.SAVE_WINDOW_SIZE`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.SAVE_WINDOW_SIZE`, !settings.get(`${packagejson.exeName}.SAVE_WINDOW_SIZE`))
                             }, {
                                 id: "always_on_top",
                                 label: getTranslation("TRAY.SETTINGS.ALWAYS_ON_TOP"),
                                 type: "checkbox",
-                                checked: settings.get("ALWAYS_ON_TOP") == true,
-                                click: () => settings.set("ALWAYS_ON_TOP", !settings.get("ALWAYS_ON_TOP"))
+                                checked: settings.get(`${packagejson.exeName}.ALWAYS_ON_TOP`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.ALWAYS_ON_TOP`, !settings.get(`${packagejson.exeName}.ALWAYS_ON_TOP`))
                             }, {
                                 id: "adblock",
                                 label: getTranslation("TRAY.SETTINGS.ADBLOCK"),
                                 type: "checkbox",
-                                checked: settings.get("ADBLOCK") == true,
+                                checked: settings.get(`${packagejson.exeName}.ADBLOCK`) == true,
                                 click: async () => await setAdBlock()
                             }, {
                                 id: "discord_rich_presence",
                                 label: getTranslation("TRAY.SETTINGS.DISCORD_RICH_PRESENCE"),
                                 type: "checkbox",
-                                checked: settings.get("DISCORD_RICH_PRESENCE") == true,
-                                click: () => settings.set("DISCORD_RICH_PRESENCE", !settings.get("DISCORD_RICH_PRESENCE"))
+                                checked: settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`) == true,
+                                click: () => settings.set(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`, !settings.get(`${packagejson.exeName}.DISCORD_RICH_PRESENCE`))
                             }]
                         }, {
                             id: "advanced",
@@ -1003,7 +989,10 @@ if (electron.app.requestSingleInstanceLock()) {
                             submenu: [{
                                 id: "reload",
                                 label: getTranslation("TRAY.ADVANCED.RELOAD"),
-                                click: () => mainWindow.loadURL(defaultUrl.base).then(() => mainWindow.webContents.emit("will-navigate", undefined, defaultUrl.base))
+                                click: () => mainWindow.loadURL(defaultUrl.base).then(() => mainWindow.webContents.emit("will-navigate", undefined, defaultUrl.base)).catch((event, code) => {
+                                    errorCode = code;
+                                    sendError();
+                                })
                             }, {
                                 id: "restart",
                                 label: getTranslation("TRAY.ADVANCED.RESTART"),
@@ -1092,9 +1081,9 @@ if (electron.app.requestSingleInstanceLock()) {
                             languagesTray.submenu.append(new electron.MenuItem({
                                 id: lang,
                                 type: "checkbox",
-                                label: lang == settings.get("LANGUAGE") ? getTranslation("LANGUAGE") : getAnotherTranslation("LANGUAGE", lang),
+                                label: lang == settings.get(`${packagejson.exeName}.LANGUAGE`) ? getTranslation("LANGUAGE") : getAnotherTranslation("LANGUAGE", lang),
                                 icon: resolve(join(__dirname, "translations", `${lang}.png`)),
-                                checked: lang == settings.get("LANGUAGE"),
+                                checked: lang == settings.get(`${packagejson.exeName}.LANGUAGE`),
                                 click: async () => await electron.dialog.showMessageBox(mainWindow, {
                                     title: displayName,
                                     message: getTranslation("CONFIRM_LANGUAGE_DIALOG.MESSAGE"),
@@ -1105,7 +1094,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                     type: "warning"
                                 }).then(result => {
                                     if (result.response == 0) {
-                                        settings.set("LANGUAGE", lang);
+                                        settings.set(`${packagejson.exeName}.LANGUAGE`, lang);
                                         electron.app.relaunch();
                                         mainWindow.removeAllListeners("close");
                                         if (!tray.isDestroyed()) tray.destroy();
@@ -1124,13 +1113,13 @@ if (electron.app.requestSingleInstanceLock()) {
                             settings.onDidChange("START_HIDDEN", newValue => {
                                 if (newValue) {
                                     startHidden.checked = true;
-                                    settings.set("START_FULL_SCREEN", false);
+                                    settings.set(`${packagejson.exeName}.START_FULL_SCREEN`, false);
                                 } else startHidden.checked = false;
                             });
                             settings.onDidChange("START_FULL_SCREEN", newValue => {
                                 if (newValue) {
                                     startFullScreen.checked = true;
-                                    settings.set("START_HIDDEN", false);
+                                    settings.set(`${packagejson.exeName}.START_HIDDEN`, false);
                                 } else startFullScreen.checked = false;
                             });
                         };
@@ -1168,7 +1157,7 @@ if (electron.app.requestSingleInstanceLock()) {
                                 [trayMenu.getMenuItemById("always_on_top"), "ALWAYS_ON_TOP"],
                                 [trayMenu.getMenuItemById("discord_rich_presence"), "DISCORD_RICH_PRESENCE"]
                             ]) {
-                            if (traySetting) settings.onDidChange(settingName, newValue => traySetting.checked = newValue);
+                            if (traySetting) settings.onDidChange(`${packagejson.exeName}.${settingName}`, newValue => traySetting.checked = newValue);
                         };
                         tray.on("double-click", () => {
                             if (isHidden) {
@@ -1190,7 +1179,11 @@ if (electron.app.requestSingleInstanceLock()) {
                             const validateUrl = new URL(url);
                             if (back) back.enabled = mainWindow.webContents.canGoBack();
                             if (forward) forward.enabled = mainWindow.webContents.canGoForward();
-                            if (httpResponseCode != 200) mainWindow.webContents.emit("did-fail-load", event, httpResponseCode);
+                            if (httpResponseCode != 200) {
+                                errorCode = httpResponseCode;
+                                event.preventDefault();
+                                sendError();
+                            } else if (validateUrl.protocol == "file:" && url.endsWith("error.html")) updateError();
                             else if (validateUrl.host == new URL(defaultUrl.base).host) {
                                 if (profileImport) profileImport.enabled = true;
                                 if (profileExport) profileExport.enabled = true;
@@ -1211,7 +1204,11 @@ if (electron.app.requestSingleInstanceLock()) {
                         };
                     };
                 };
-                return mainWindow.loadURL(defaultUrl.full).then(() => init(defaultUrl.full)).catch(() => init());
+                return mainWindow.loadURL(defaultUrl.full).then(() => init(defaultUrl.full)).catch((event, code) => {
+                    errorCode = code;
+                    init();
+                    return sendError();
+                });
             };
             electron.app.on("activate", () => {
                 if (electron.BrowserWindow.getAllWindows().length <= 0) return createWindow();

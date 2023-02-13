@@ -4,7 +4,7 @@
     "exeName": "ANIME_SAMA_FR",
     "releaseYear": "2023",
     "protocol": "anime-sama-fr",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "The anime-sama.fr desktop app!",
     "keywords": [
         "javascript",
